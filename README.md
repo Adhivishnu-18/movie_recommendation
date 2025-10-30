@@ -110,7 +110,7 @@ Movies suggested for you :
 
 ---
 
-## 📊 Output
+## Output
 
 The program displays the top **10 most similar movies** based on cosine similarity scores.
 
