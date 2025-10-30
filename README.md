@@ -1,100 +1,128 @@
-# movie_recommendation
-#A movie recommender system project based on content based filtering
 
-import numpy as np
-import pandas as pd
-import difflib
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
-#loading the data from csv file to a pandas dataframe
+#  Movie Recommendation System
 
-movies_data =  pd.read_csv("/content/movies.csv")
+*A Content-Based Filtering Project using Cosine Similarity*
 
-#printing first 5 rows of th data set
-movies_data.head()
+## Overview
 
-# number of rows and columns in the data frame
+This project is a **content-based movie recommender system** that suggests movies similar to a user’s favorite movie. It uses **TF-IDF Vectorization** and **Cosine Similarity** to find and rank movies based on textual features such as *genres*, *keywords*, *cast*, *director*, and *tagline*.
 
-movies_data.shape
+---
 
-# selecting the relevent features for recommendation
+## Features
 
-selected_features = ['genres','keywords','cast','director','tagline']
-print(selected_features)
+* Recommends movies similar to the one you input.
+* Uses **content-based filtering** — no user ratings needed.
+* Employs **TF-IDF (Term Frequency – Inverse Document Frequency)** for feature extraction.
+* Uses **Cosine Similarity** to measure movie similarity.
+* Handles missing data gracefully.
 
-# replacing the null values with null string
-for feature in selected_features:
-    movies_data[feature]= movies_data[feature].fillna('')
+---
 
-#combining all the selected features
-combined_features = movies_data['genres']+' '+movies_data['keywords']+' '+movies_data['tagline']+' '+movies_data['cast']+' '+movies_data['director']
+## Tech Stack
 
-# coverting text data to feature vectors
+* **Python**
+* **Pandas**
+* **NumPy**
+* **Scikit-learn** (for TF-IDF and cosine similarity)
+* **Difflib** (for fuzzy string matching)
 
-vectorizer = TfidfVectorizer()
-feature_vectors = vectorizer.fit_transform(combined_features)
-print(feature_vectors)
-#getting the similarity scores using cosine similarity rule
-similarity = cosine_similarity(feature_vectors)
-print(similarity)
-print(similarity.shape)
-#getting the user name from the user
+---
 
-movie_name = input(' Enter your favourite movie name : ')
+##  Dataset
 
-#creating a list of all movies  given in the dataset
+The dataset used is `movies.csv`, containing details about various movies such as:
 
-list_of_all_titles = movies_data['title'].tolist()
+* `title`
+* `genres`
+* `keywords`
+* `cast`
+* `director`
+* `tagline`
 
-print(list_of_all_titles)
-#find close match
-find_close_match = difflib.get_close_matches(movie_name,list_of_all_titles)
-print(find_close_match)
-close_match = find_close_match[0]
-print(close_match)
-#finding the index of the movie with the title
-index_of_the_movie = movies_data[movies_data.title == close_match]['index'].values[0]
-print(index_of_the_movie)
-similarity_score = list(enumerate(similarity[index_of_the_movie]))
-print(similarity_score)
-len(similarity_score)
-# sorting the movies based on theirsimilarites
+*(Ensure your CSV file includes these columns.)*
 
-sorted_similar_movies = sorted(similarity_score,key = lambda x:x[1],reverse=True)
-print(sorted_similar_movies)
-#print the name of similar movies based on their index
-print("Movies suggested for you : \n")
+---
 
-i=1
-for movie in sorted_similar_movies :
-  index = movie[0]
-  title_from_index = movies_data[movies_data.index==index]['title'].values[0]
-  if(i<10):
-    print(i,'.',title_from_index)
-    i+=1
+##  How It Works
 
-movie_name = input(' Enter your favourite movie name : ')
+1. Load the movie dataset using **Pandas**.
+2. Select key textual features (`genres`, `keywords`, `cast`, `director`, `tagline`).
+3. Replace missing values with empty strings.
+4. Combine all selected features into a single text field.
+5. Convert the combined text into numerical feature vectors using **TfidfVectorizer**.
+6. Compute **cosine similarity** between all movies.
+7. Take user input for a favorite movie.
+8. Find the closest match for that movie title.
+9. Retrieve and display the **top 10 most similar movies**.
 
-list_of_all_titles = movies_data['title'].tolist()
+---
 
-find_close_match = difflib.get_close_matches(movie_name,list_of_all_titles)
+##  Example Usage
 
-close_match = find_close_match[0]
+```bash
+Enter your favourite movie name : Avatar
+```
 
-index_of_the_movie = movies_data[movies_data.title == close_match]['index'].values[0]
+**Output:**
 
-similarity_score = list(enumerate(similarity[index_of_the_movie]))
+```
+Movies suggested for you :
 
-sorted_similar_movies = sorted(similarity_score,key = lambda x:x[1],reverse=True)
+1. Guardians of the Galaxy  
+2. Star Trek  
+3. John Carter  
+4. The Avengers  
+5. The Matrix  
+6. The Fifth Element  
+7. Interstellar  
+8. Star Wars  
+9. Thor: Ragnarok  
+```
 
-print("Movies suggested for you : \n")
+---
 
-i=1
-for movie in sorted_similar_movies :
-  index = movie[0]
-  title_from_index = movies_data[movies_data.index==index]['title'].values[0]
-  if(i<10):
-    print(i,'.',title_from_index)
-    i+=1
+##  Concepts Used
+
+* **Content-Based Filtering**: Recommends items similar to what a user likes, based on item attributes.
+* **TF-IDF Vectorization**: Converts text into meaningful numerical representations.
+* **Cosine Similarity**: Measures similarity between two movie feature vectors.
+* **String Matching (Difflib)**: Helps handle user typos or partial matches when entering movie names.
+
+---
+
+##  Setup Instructions
+
+1. Clone the repository or copy the code.
+2. Install the required libraries:
+
+   ```bash
+   pip install numpy pandas scikit-learn
+   ```
+3. Place your `movies.csv` file in the same directory.
+4. Run the Python file:
+
+   ```bash
+   python movie_recommendation.py
+   ```
+5. Enter your favorite movie name when prompted.
+
+---
+
+## 📊 Output
+
+The program displays the top **10 most similar movies** based on cosine similarity scores.
+
+---
+
+##  Future Improvements
+
+* Integrate a **web UI** using Streamlit or Flask.
+* Add **collaborative filtering** for hybrid recommendations.
+* Include more metadata (e.g., movie overview, release date).
+* Optimize with **dimensionality reduction (SVD or PCA)**.
+
+---
+
 
